@@ -48,11 +48,11 @@
 
 /* Custom Paw Cursor */
 *, body {
-  cursor: url('/paw.svg') 12 12, auto;
+  cursor: url('./paw.svg') 12 12, auto;
 }
 
 a, button, .liquid-button, .nav-btn, .theme-btn {
-  cursor: url('/paw.svg') 12 12, pointer !important;
+  cursor: url('./paw.svg') 12 12, pointer !important;
 }
 
 body {
