@@ -1,0 +1,727 @@
+@import url('https://fonts.googleapis.com/css2?family=Ole&display=swap');
+
+:root {
+  --bg-color: #FFECC9;
+  --text-color: #4a3c31;
+
+  --glass-bg: rgba(255, 255, 255, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-shadow: rgba(0, 0, 0, 0.1);
+  --glass-highlight: rgba(255, 255, 255, 0.8);
+  --glass-caustic: rgba(255, 255, 255, 0.4);
+  --reflection-start: rgba(255, 255, 255, 0.6);
+  --reflection-end: rgba(255, 255, 255, 0.0);
+  --glare-color: rgba(255, 255, 255, 0.5);
+
+  --pill-bg: rgba(255, 255, 255, 0.7);
+  --pill-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  --icon-color: rgba(0, 0, 0, 0.5);
+  --icon-active: rgba(0, 0, 0, 0.95);
+  --divider: rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="dark"] {
+  --bg-color: #1a1a1a;
+  --text-color: #f0e6d2;
+
+  --glass-bg: rgba(30, 30, 35, 0.45);
+  --glass-border: rgba(255, 255, 255, 0.15);
+  --glass-shadow: rgba(0, 0, 0, 0.8);
+  --glass-highlight: rgba(255, 255, 255, 0.25);
+  --glass-caustic: rgba(255, 255, 255, 0.05);
+  --reflection-start: rgba(255, 255, 255, 0.15);
+  --reflection-end: rgba(255, 255, 255, 0.0);
+  --glare-color: rgba(255, 255, 255, 0.15);
+
+  --pill-bg: rgba(60, 60, 65, 0.8);
+  --pill-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  --icon-color: rgba(255, 255, 255, 0.5);
+  --icon-active: #ffffff;
+  --divider: rgba(255, 255, 255, 0.15);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Custom Paw Cursor */
+*, body {
+  cursor: url('/paw.svg') 12 12, auto;
+}
+
+a, button, .liquid-button, .nav-btn, .theme-btn {
+  cursor: url('/paw.svg') 12 12, pointer !important;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  font-family: 'Ole', cursive, sans-serif;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  color: var(--text-color);
+  transition: background-color 0.8s ease, color 0.8s ease;
+}
+
+/* Custom Liquid Scrollbar */
+::-webkit-scrollbar {
+  width: 16px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+  transition: background-color 0.5s ease;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--glass-highlight) 0%, var(--glass-bg) 100%);
+  border: 4px solid var(--bg-color); /* Creates a floating pill effect */
+  border-radius: 20px;
+  box-shadow: inset 1px 1px 2px var(--glass-caustic);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--glass-highlight);
+}
+
+.liquid-nav {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 99px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(50px) saturate(200%);
+  -webkit-backdrop-filter: blur(50px) saturate(200%);
+  box-shadow:
+    0 40px 80px -20px var(--glass-shadow),
+    0 10px 30px -10px var(--glass-shadow),
+    inset 0 2px 3px -1px var(--glass-highlight),
+    inset 0 -2px 4px -1px var(--glass-caustic),
+    inset 0 0 0 1px var(--glass-border);
+  transition: background 0.5s ease, box-shadow 0.5s ease, border-color 0.5s ease;
+  z-index: 40;
+}
+
+.liquid-nav::before {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  right: 1px;
+  height: 46%;
+  border-radius: 99px 99px 24px 24px / 99px 99px 12px 12px;
+  background: linear-gradient(180deg, var(--reflection-start) 0%, var(--reflection-end) 100%);
+  pointer-events: none;
+  z-index: 6;
+  transition: background 0.5s ease;
+}
+
+.liquid-glare-container {
+  position: absolute;
+  inset: 0;
+  border-radius: 99px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.liquid-glare {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(circle 90px at var(--x, 50%) var(--y, 50%), var(--glare-color) 0%, transparent 100%);
+  mix-blend-mode: overlay;
+}
+
+.liquid-nav:hover .liquid-glare,
+.liquid-panel:hover .liquid-glare {
+  opacity: 1;
+}
+
+.nav-items {
+  position: relative;
+  display: flex;
+  gap: 8px;
+  z-index: 3;
+}
+
+.active-pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 44px;
+  background: var(--pill-bg);
+  border-radius: 99px;
+  box-shadow: var(--pill-shadow);
+  z-index: 1;
+}
+
+.nav-btn {
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 0 40px;
+  height: 44px;
+  border-radius: 99px;
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--icon-color);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.3s ease;
+  outline: none;
+  z-index: 2;
+}
+
+.btn-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+  transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.nav-btn:active .btn-content {
+  transform: scale(0.92);
+}
+
+.nav-btn.active {
+  color: var(--icon-active);
+}
+
+.divider {
+  width: 1px;
+  height: 30px;
+  background: var(--divider);
+  margin: 0 6px;
+  z-index: 3;
+  transition: background 0.5s ease;
+}
+
+.theme-btn {
+  position: relative;
+  background: transparent;
+  border: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: var(--icon-color);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 3;
+  outline: none;
+  margin-left: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease;
+}
+
+.theme-btn:hover,
+.theme-btn:active {
+  color: var(--icon-active);
+}
+
+.theme-icon-wrapper {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.theme-btn:active .theme-icon-wrapper {
+  transform: scale(0.8);
+}
+
+.theme-icon-wrapper svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.4s ease;
+  stroke-width: 2.2;
+}
+
+.sun {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.moon {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0);
+}
+
+[data-theme="dark"] .sun {
+  opacity: 0;
+  transform: rotate(90deg) scale(0);
+}
+
+[data-theme="dark"] .moon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* Fullscreen Liquid Screen */
+.fullscreen-liquid {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 50; /* High z-index to cover everything except the navbar (z-index 100) */
+  
+  background: var(--glass-bg);
+  backdrop-filter: blur(50px) saturate(200%);
+  -webkit-backdrop-filter: blur(50px) saturate(200%);
+  box-shadow: inset 0 2px 3px -1px var(--glass-highlight),
+              inset 0 -2px 4px -1px var(--glass-caustic),
+              inset 0 0 0 1px var(--glass-border);
+  overflow: hidden;
+}
+
+.fullscreen-liquid::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, var(--reflection-start) 0%, var(--reflection-end) 100%);
+  pointer-events: none;
+  z-index: 0;
+  transition: background 0.5s ease;
+}
+
+.fullscreen-liquid > * {
+  position: relative;
+  z-index: 1;
+}
+
+.fullscreen-liquid .liquid-glare-container {
+  border-radius: 0;
+}
+
+/* Liquid Panel Utilities */
+.liquid-panel {
+  position: relative;
+  background: var(--glass-bg);
+  backdrop-filter: blur(50px) saturate(200%);
+  -webkit-backdrop-filter: blur(50px) saturate(200%);
+  border-radius: 20px;
+  box-shadow:
+      0 40px 80px -20px var(--glass-shadow),
+      0 10px 30px -10px var(--glass-shadow),
+      inset 0 2px 3px -1px var(--glass-highlight),
+      inset 0 -2px 4px -1px var(--glass-caustic),
+      inset 0 0 0 1px var(--glass-border);
+  overflow: hidden;
+}
+
+.liquid-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  border-bottom-left-radius: 50% 20px;
+  border-bottom-right-radius: 50% 20px;
+  background: linear-gradient(180deg, var(--reflection-start) 0%, var(--reflection-end) 100%);
+  pointer-events: none;
+  z-index: 0;
+  transition: background 0.5s ease;
+}
+
+.liquid-panel > * {
+  position: relative;
+  z-index: 1;
+}
+
+.liquid-panel .liquid-glare-container {
+  border-radius: inherit;
+}
+
+/* Liquid Button */
+.liquid-button {
+  position: relative;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-size: 1.2rem;
+  font-family: 'Ole', cursive, sans-serif;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--text-color);
+  background: var(--glass-bg);
+  backdrop-filter: blur(50px) saturate(200%);
+  -webkit-backdrop-filter: blur(50px) saturate(200%);
+  box-shadow:
+      0 10px 20px -5px var(--glass-shadow),
+      inset 0 2px 3px -1px var(--glass-highlight),
+      inset 0 -2px 4px -1px var(--glass-caustic),
+      inset 0 0 0 1px var(--glass-border);
+  border: none;
+  overflow: hidden;
+}
+
+.liquid-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  border-bottom-left-radius: 50% 15px;
+  border-bottom-right-radius: 50% 15px;
+  background: linear-gradient(180deg, var(--reflection-start) 0%, var(--reflection-end) 100%);
+  pointer-events: none;
+  z-index: 0;
+  transition: background 0.5s ease;
+}
+
+.liquid-button > * {
+  position: relative;
+  z-index: 1;
+}
+
+.liquid-button:hover {
+  transform: translateY(-2px);
+  box-shadow:
+      0 20px 40px -10px var(--glass-shadow),
+      inset 0 2px 3px -1px var(--glass-highlight),
+      inset 0 -2px 4px -1px var(--glass-caustic),
+      inset 0 0 0 1px var(--glass-border);
+}
+
+/* Scroll Container Setup */
+.scroll-container {
+  position: relative;
+  width: 100%;
+  pointer-events: none;
+}
+
+.section {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  padding: 0 10vw;
+  pointer-events: none;
+  /* Let clicks pass through to canvas if needed */
+}
+
+.section>* {
+  pointer-events: auto;
+  /* Re-enable pointer events for section content */
+}
+
+.hero {
+  align-items: center;
+  text-align: center;
+}
+
+.hero-text-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.hero-title-top {
+  font-size: 3rem;
+  color: #4a3c31;
+  margin-bottom: 10px;
+  text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.5);
+}
+
+.hero-split {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  position: relative;
+}
+
+.hero-left,
+.hero-right {
+  font-size: 8rem;
+  color: #4a3c31;
+  text-shadow: 2px 2px 15px rgba(255, 255, 255, 0.6);
+  /* Use absolute positioning to allow them to cross the center without layout shifts, or just use flex. Flex with gap works fine for GSAP x translations. */
+  white-space: nowrap;
+}
+
+.hero-sub {
+  font-size: 1.5rem;
+  max-width: 600px;
+  margin-top: 30px;
+}
+
+.hero-new-text {
+  position: absolute;
+  right: 10vw;
+  /* Positioned on the right side */
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 1;
+  padding: 40px;
+  border-radius: 20px;
+  text-align: left;
+  max-width: 400px;
+}
+
+.hero-new-text h3 {
+  font-size: 3rem;
+  margin-bottom: 15px;
+}
+
+.hero-new-text p {
+  font-size: 1.2rem;
+  line-height: 1.5;
+}
+
+.section-left {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.section-right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.section h2 {
+  font-size: 4rem;
+  margin-bottom: 20px;
+}
+
+.section p {
+  font-size: 1.4rem;
+  max-width: 400px;
+  line-height: 1.6;
+}
+
+/* Footer Section */
+.footer {
+  height: 100vh;
+  /* Make footer tall enough to let model settle */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 50px;
+  pointer-events: auto;
+}
+
+.footer h2 {
+  font-size: 4rem;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.footer-links {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.footer-links a {
+  text-decoration: none;
+  color: var(--text-color);
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding: 12px 24px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 99px;
+  box-shadow: inset 0 1px 2px var(--glass-highlight), 0 4px 8px var(--glass-shadow);
+  transition: all 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+.footer-links a:hover {
+  transform: translateY(-3px) scale(1.05);
+  background: var(--glass-highlight);
+  color: var(--icon-active);
+  box-shadow: inset 0 1px 2px var(--glass-highlight), 0 8px 15px var(--glass-shadow);
+}
+
+.rights {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--text-color);
+  opacity: 1;
+  margin-top: 15px;
+  text-align: center;
+  width: 100%;
+  text-shadow: 0px 1px 2px var(--glass-highlight);
+}
+
+@media (max-width: 1024px) {
+  .section-left,
+  .section-right {
+    align-items: center;
+    text-align: center;
+    justify-content: flex-end;
+    padding-bottom: 15vh;
+  }
+  .hero-left,
+  .hero-right {
+    font-size: 6rem;
+  }
+  .hero-new-text {
+    right: 5vw;
+    max-width: 300px;
+  }
+  .nav-btn {
+    padding: 0 20px;
+  }
+  
+  .btn-content span {
+    display: none; /* Hide text on tablet and mobile */
+  }
+  
+  .btn-content {
+    gap: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-left,
+  .hero-right {
+    font-size: 3.5rem;
+  }
+  .hero-title-top {
+    font-size: 2rem;
+  }
+  .hero-split {
+    gap: 10px;
+  }
+  
+  .hero-new-text {
+    position: absolute;
+    right: 50%;
+    transform: translateX(50%);
+    bottom: 10%;
+    top: auto;
+    text-align: center;
+    width: 90%;
+    padding: 20px;
+  }
+  
+  .hero-new-text h3 {
+    font-size: 2rem;
+  }
+
+  .section h2 {
+    font-size: 2.5rem;
+  }
+
+  .section p {
+    font-size: 1.1rem;
+  }
+  
+  .section {
+    padding: 0 5vw;
+  }
+
+  .liquid-nav {
+    width: 95%;
+    padding: 8px;
+    top: 10px;
+  }
+  
+  .nav-btn {
+    padding: 0 15px;
+  }
+  
+  .footer-links {
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+  }
+}
+
+/* Minimum White Cloud Atlas Background Effect */
+.bg-mesh {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -2; /* Sits behind the 3D canvas (z-index: -1) */
+  overflow: hidden;
+  background-color: var(--bg-color);
+  transition: background-color 0.5s ease;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  -webkit-filter: blur(80px);
+  animation: floatCloud 20s infinite ease-in-out alternate;
+}
+
+[data-theme="light"] .blob {
+  /* Minimalist pure white glowing clouds */
+  background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 70%);
+  opacity: 0.8;
+}
+
+[data-theme="dark"] .blob {
+  /* Soft silvery moon-lit clouds for dark mode */
+  background: radial-gradient(circle, rgba(200,200,210,0.3) 0%, rgba(200,200,210,0) 70%);
+  opacity: 0.5;
+}
+
+.blob-1 {
+  width: 60vw;
+  height: 60vw;
+  top: -10vw;
+  left: -10vw;
+  animation-delay: 0s;
+}
+
+.blob-2 {
+  width: 50vw;
+  height: 50vw;
+  top: 40vh;
+  right: -10vw;
+  animation-delay: -5s;
+}
+
+.blob-3 {
+  width: 70vw;
+  height: 70vw;
+  bottom: -20vw;
+  left: 20vw;
+  animation-delay: -10s;
+}
+
+@keyframes floatCloud {
+  0% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(5vw, -5vh) scale(1.1); }
+  66% { transform: translate(-5vw, 5vh) scale(0.9); }
+  100% { transform: translate(2vw, -2vh) scale(1.05); }
+}
