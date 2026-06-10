@@ -9,7 +9,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 export const Shiba = React.forwardRef(({ controlsEnabled, baseScale, ...props }, ref) => {
   const localGroup = useRef();
-  const { scene } = useGLTF('./Model/scene.gltf');
+  const { scene } = useGLTF(`${import.meta.env.BASE_URL}Model/scene.gltf`);
 
   // Drag state
   const isDragging = useRef(false);
@@ -151,4 +151,4 @@ export const Shiba = React.forwardRef(({ controlsEnabled, baseScale, ...props },
   );
 });
 
-useGLTF.preload('./Model/scene.gltf');
+useGLTF.preload(`${import.meta.env.BASE_URL}Model/scene.gltf`);

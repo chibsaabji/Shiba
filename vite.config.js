@@ -1,9 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
 export default defineConfig({
-  base: './', // Ensures relative paths work on GitHub Pages regardless of repo name
+  base: '/Shiba/', // Ensures assets load correctly from the /Shiba/ subdirectory on GitHub Pages
   plugins: [react()],
   build: {
     chunkSizeWarningLimit: 1600, // Three.js can be quite large

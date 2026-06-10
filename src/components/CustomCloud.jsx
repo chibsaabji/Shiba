@@ -3,7 +3,7 @@ import { useGLTF, Center } from '@react-three/drei';
 import { useFrame } from '@react-three/fiber';
 
 export const CustomCloud = (props) => {
-  const { scene } = useGLTF('./Model/cloud/scene.gltf');
+  const { scene } = useGLTF(`${import.meta.env.BASE_URL}Model/cloud/scene.gltf`);
   // Clone the scene so we can reuse the model multiple times independently
   const clonedScene = useMemo(() => scene.clone(), [scene]);
   const innerGroup = useRef();
@@ -37,4 +37,4 @@ export const CustomCloud = (props) => {
   );
 };
 
-useGLTF.preload('./Model/cloud/scene.gltf');
+useGLTF.preload(`${import.meta.env.BASE_URL}Model/cloud/scene.gltf`);
